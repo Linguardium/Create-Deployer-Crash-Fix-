@@ -2,7 +2,6 @@ package mod.linguardium.DeployerCrashFix.mixin;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -34,7 +33,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public List<String> getMixins() {
         if (FabricLoader.getInstance().isModLoaded("create")) {
-            return List.of("DeployerMixin");
+            return List.of("DeployerMixin","EntityMixin","PortingLibCreateCaptureFix");
         }else{
             LoggerFactory.getLogger("Deployer Crash Fix").warn("Create mod not found");
             return null;
