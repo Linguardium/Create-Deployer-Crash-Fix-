@@ -2,6 +2,8 @@ package mod.linguardium.DeployerCrashFix.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.linguardium.DeployerCrashFix.DeployerHandlerLocal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -18,13 +20,14 @@ import java.util.List;
 @Mixin(targets = {"com.simibubi.create.content.kinetics.deployer.DeployerHandler"})
 public class DeployerMixin {
     @Dynamic(value = "added by Porting-Lib Entity Extension in io.github.fabricators_of_create.porting_lib.entity.mixin.EntityMixin")
-    @ModifyExpressionValue(method="activateInner(Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lnet/minecraft/class_243;Lnet/minecraft/class_2338;Lnet/minecraft/class_243;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity$Mode;)V", at=@At(value="INVOKE",target="net/minecraft/class_1297.finishCapturingDrops()Ljava/util/List;"), remap = false)
-    private static List<ItemEntity> nullCapturesAsEmpty(List<ItemEntity> original) {
-        if (original instanceof LivingEntity) {
-            ((DeployerHandlerLocal) original).deployercrash$inDeployerHandler(false);
+    @WrapOperation(method="activateInner(Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lnet/minecraft/class_243;Lnet/minecraft/class_2338;Lnet/minecraft/class_243;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity$Mode;)V", at=@At(value="INVOKE",target="net/minecraft/class_1297.finishCapturingDrops()Ljava/util/List;"), remap = false)
+    private static List<ItemEntity> nullCapturesAsEmpty(Entity entity, Operation<List<ItemEntity>> oper) {
+        if (entity instanceof LivingEntity) {
+            ((DeployerHandlerLocal) entity).deployercrash$inDeployerHandler(false);
         }
-        if (original == null) return new ArrayList<>();
-        return original;
+        List<ItemEntity> list = oper.call(entity);
+        if (list == null) return new ArrayList<>();
+        return list;
     }
     @Dynamic(value = "Deployer from create")
     @ModifyReceiver(method="activateInner(Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lnet/minecraft/class_243;Lnet/minecraft/class_2338;Lnet/minecraft/class_243;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity$Mode;)V", at=@At(value="INVOKE",target="net/minecraft/class_1297.startCapturingDrops()V"), remap = false)
